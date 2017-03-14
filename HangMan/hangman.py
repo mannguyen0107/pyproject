@@ -63,7 +63,7 @@ def genDashLines(word):
     dash = ' - ' * len(word)
     return dash.split()
 
-def getGuess(alreadyGuessed, alphabet):
+def getGuess(alreadyGuessed):
     while True:
         print('\n', 'Guess a letter: ', end='')
         guess = input().lower()
@@ -71,7 +71,7 @@ def getGuess(alreadyGuessed, alphabet):
             print("Please enter a single letter.")
         elif guess in alreadyGuessed:
             print("You already guessed that letter. Try again.")
-        elif guess not in alphabet:
+        elif not (guess.isalpha()):
             print("Please enter a LETTER.")
         else:
             return guess
@@ -105,27 +105,28 @@ def playAgain():
     print('\n', 'Do you want to play again? (yes or no)')
     return input().lower().startswith('y')
 
+def startGame():
+    secretWord = getRandWord(words)
+    dashLines = genDashLines(secretWord)
+    missedLetters = ""
+    correctLetters = ""
+    alphabet = "a b c d e f g h i j k l m n o p q r s t u v w x y z"
+    char = alphabet.split()
+    gameIsDone = False
+    return (secretWord, dashLines, missedLetters, correctLetters, char, gameIsDone)
+
 # Get all words into a list
 wordsList = open('words.txt', 'r')
 words = wordsList.read().lower().split()
 
-# Choose a random word from the word list
-secretWord = getRandWord(words)
-
-# Generate dashes line from the secret word
-dashLines = genDashLines(secretWord)
-
 print("H A N G M A N")
-missedLetters = ""
-correctLetters = ""
-alphabet = "a b c d e f g h i j k l m n o p q r s t u v w x y z"
-char = alphabet.split()
-gameIsDone = False
+secretWord, dashLines, missedLetters, correctLetters, char, gameIsDone = startGame()
+print(secretWord)
 
 while True:
     displayBoard(hangmanpics, missedLetters, correctLetters, secretWord, char, dashLines)
 
-    guess = getGuess(missedLetters + correctLetters, alphabet)
+    guess = getGuess(missedLetters + correctLetters)
 
     if guess in secretWord:
         correctLetters += guess
@@ -155,12 +156,6 @@ while True:
 
     if gameIsDone:
         if playAgain():
-            alphabet = "a b c d e f g h i j k l m n o p q r s t u v w x y z"
-            missedLetters = ""
-            correctLetters = ""
-            char = alphabet.split()
-            gameIsDone = False
-            secretWord = getRandWord(words)
-            dashLines = genDashLines(secretWord)
+            secretWord, dashLines, missedLetters, correctLetters, char, gameIsDone = startGame()
         else:
             break
